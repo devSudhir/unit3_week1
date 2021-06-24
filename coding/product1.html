@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      #container {
+        width: 90vw;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        grid-gap: 15px;
+        margin: auto;
+      }
+      #container img {
+        width: 200px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container"></div>
+  </body>
+</html>
+<script>
+  async function getData() {
+    try {
+      let response = await fetch("https://fakestoreapi.com/products");
+      var data = await response.json();
+      console.log(data);
+      appendProducts(data);
+    } catch (e) {
+      console.log("e:", e);
+    } finally {
+      console.log("completed");
+    }
+  }
+  getData();
+
+  function appendProducts(productData) {
+    let container = document.getElementById("container");
+    productData.forEach(function (ele) {
+      let div = document.createElement("div");
+      div.innerHTML = `<img src=${ele.image}>
+        <h2>${ele.title}</h2>
+        <h3>${ele.price}</h3>
+        <p>${ele.description}</p>      
+      
+      `;
+      container.appendChild(div);
+    });
+  }
+</script>

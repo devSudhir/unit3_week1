@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    Name:<input id="location" type="text" />
+    <button onclick="getWheatherData()" type="submit">Get wheather data</button>
+    <div id="container"></div>
+  </body>
+</html>
+<script>
+  async function getWheatherData() {
+    let inp = document.getElementById("location").value;
+    console.log(inp);
+    let response = await fetch(
+      `https://api.openweathermap.org/data/2.5/weather?q=${inp}&appid=8d5608447826b3863b0cdd2d218147e4`
+    );
+    let data = await response.json();
+    console.log(data);
+    showWheatherData(data);
+  }
+
+  function showWheatherData(data) {
+    let div = document.getElementById("container");
+    div.innerHTML = `<h2>Name-${data.name}</h2>
+    <h3>Temp:${data.main.temp - 273}C</h3>    
+    <h4>humidity:${data.main.humidity}</h4>
+    <h5>Pressure:${data.main.pressure}</h5>`;
+  }
+</script>

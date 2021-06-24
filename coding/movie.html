@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Search For movies</title>
+    <style>
+      h1,
+      h2,
+      h3,
+      h4,
+      h5 {
+        margin: 0;
+        padding: 0;
+      }
+      div {
+        margin: 10px;
+      }
+      #search {
+        width: 300px;
+        margin: auto;
+      }
+      #search label {
+        font-size: 1.5rem;
+      }
+      #search button,
+      #search input {
+        padding: 5px;
+      }
+      #container {
+        width: 500px;
+        margin: 10px auto;
+        text-align: center;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="search">
+      <label for="movieName">Enter Movie Name</label>
+      <input type="text" name="movieName" id="movieName" />
+      <button onclick="getMovieData()">Submit</button>
+    </div>
+    <div id="container"></div>
+  </body>
+</html>
+<script>
+  async function getMovieData() {
+    let input = document.getElementById("movieName").value;
+    document.getElementById("container").innerHTML = null;
+    try {
+      let response = await fetch(
+        `http://www.omdbapi.com/?t=${input}&apikey=3b615a71`
+      );
+      let data = await response.json();
+      showData(data);
+    } catch (e) {
+      console.log("ERROR:", e);
+    }
+  }
+  function showData(data) {
+    if (data.Response == "False") {
+      alert("You entered wrong movie name!");
+    } else {
+      let container = document.getElementById("container");
+      container.innerHTML = `<h1>Name:${data.Title}</h1>
+      <h2>Year:${data.Year}</h2>
+      <h3>Director:${data.Director}</h3>
+      <h3>Actors:${data.Actors}</h3>
+      <h3>Rating:${data.imdbRating}</h3>
+      <h4>Released:${data.Released}</h4>
+      <h4>Runtime:${data.Runtime}</h4>`;
+    }
+  }
+</script>
