@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Search For movies</title>
+    <style>
+      h1,
+      h2,
+      h3,
+      h4,
+      h5 {
+        margin: 0;
+        padding: 0;
+      }
+      div {
+        margin: 10px;
+      }
+      #search {
+        width: 300px;
+        margin: auto;
+      }
+      #search label {
+        font-size: 1.5rem;
+      }
+      #search button,
+      #search input {
+        padding: 5px;
+      }
+      #container {
+        width: 500px;
+        margin: 10px auto;
+        text-align: center;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      #container img {
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="search">
+      <label for="movieName">Enter Movie Name</label>
+      <input type="text" name="movieName" id="movieName" />
+      <button onclick="getMovieData()">Submit</button>
+    </div>
+    <div id="container"></div>
+  </body>
+</html>
+<script>
+  async function getMovieData() {
+    let input = document.getElementById("movieName").value;
+    document.getElementById("container").innerHTML = null;
+    try {
+      let response = await fetch(
+        `http://www.omdbapi.com/?t=${input}&apikey=3b615a71`
+      );
+      let data = await response.json();
+      showData(data);
+    } catch (e) {
+      console.log("ERROR:", e);
+    }
+  }
+  function showData(data) {
+    console.log(data);
+    let container = document.getElementById("container");
+    if (data.Response == "False") {
+      container.innerHTML = `
+        <img src="data:image/png;base64,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">`;
+      alert("You entered wrong movie name!");
+    } else {
+      container.innerHTML = `
+      <img src="https://source.unsplash.com/1600x900/?movie,hollywood">
+      <h1>Name:${data.Title}</h1>
+      <h2>Year:${data.Year}</h2>
+      <h3>Director:${data.Director}</h3>
+      <h3>Actors:${data.Actors}</h3>
+      <h3>Rating:${data.imdbRating}</h3>
+      <h4>Released:${data.Released}</h4>
+      <h4>Runtime:${data.Runtime}</h4>`;
+    }
+  }
+</script>
