@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+      }
+      h1 {
+        text-align: center;
+        color: #fff;
+        background-color: #333;
+      }
+      #showArticles {
+        background-color: #eee;
+        padding: 20px;
+        display: grid;
+        grid-template-columns: 50% 50%;
+        grid-gap: 20px;
+        max-width: 95vw;
+      }
+      #showArticles div {
+        border: 1px solid black;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        align-items: center;
+      }
+      #showArticles div img {
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Sports</h1>
+    <div id="showArticles"></div>
+  </body>
+</html>
+<script>
+  var data;
+  async function getNewsData() {
+    let response = await fetch(
+      "https://newsapi.org/v2/everything?q=Sports&from=2021-05-25&sortBy=publishedAt&apiKey=617d6ae40088405fb55dd7bace8784d1"
+    );
+    let data = await response.json();
+    return data;
+  }
+
+  async function showData() {
+    let showArticles = document.getElementById("showArticles");
+    data = await getNewsData();
+    console.log(data.articles);
+    data.articles.forEach(function (ele) {
+      let div = document.createElement("div");
+      div.innerHTML = `<img src=${ele.urlToImage}>
+                        <h2>${ele.title}</h2>
+                        <p>${ele.description}</p>
+                        <h5>${ele.publishedAt}</h5>
+                        <h6>${ele.content}</h6>
+                        <span>${ele.author}</span>`;
+      showArticles.appendChild(div);
+    });
+  }
+  showData();
+</script>
