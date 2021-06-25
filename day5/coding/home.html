@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="dataDiv"></div>
+    <div id="btnDiv"></div>
+  </body>
+</html>
+<script>
+  var data;
+  function showButton(pageStartNumber) {
+    pageStartNumber = Number(pageStartNumber);
+    let originalId = pageStartNumber;
+    let btnDiv = document.getElementById("btnDiv");
+    btnDiv.innerHTML = null;
+
+    if (pageStartNumber <= 5) {
+      pageStartNumber = 5;
+    }
+    for (let i = pageStartNumber - 5; i <= pageStartNumber + 4; i++) {
+      console.log(i, pageStartNumber);
+      let btn = document.createElement("button");
+      btn.setAttribute("id", i);
+      btn.onclick = showData;
+      btn.textContent = i + 1;
+      btnDiv.appendChild(btn);
+    }
+    let highlightBtn = document.getElementById(originalId);
+    highlightBtn.style.backgroundColor = "yellow";
+  }
+  function showData() {
+    console.log(this.id);
+    //console.log(event.target.id);
+    let dataDiv = document.getElementById("dataDiv");
+    dataDiv.innerHTML = null;
+    let id = this.id;
+    let comments = data.slice(id * 10, id * 10 + 10);
+    comments.forEach(function (ele) {
+      let p = document.createElement("p");
+      p.innerHTML = `${ele.id}.${ele.name}`;
+      dataDiv.appendChild(p);
+    });
+    console.log(comments);
+
+    showButton(id);
+  }
+  async function getComments() {
+    try {
+      let response = await fetch(
+        "http://jsonplaceholder.typicode.com/comments"
+      );
+      let data = await response.json();
+      return data;
+    } catch (error) {}
+  }
+
+  async function main(id) {
+    data = await getComments();
+    /* console.log(data); */
+  }
+  main();
+  showButton(0);
+  //showData(0);
+</script>
