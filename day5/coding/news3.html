@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+      }
+      h1 {
+        text-align: center;
+        color: #fff;
+        background-color: #333;
+      }
+      nav {
+        background-color: #333;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      nav #search {
+        margin-left: auto;
+        color: white;
+        margin-right: 20px;
+      }
+
+      #search input,
+      #search button {
+        padding: 5px;
+        border-radius: 5px;
+      }
+      #search button {
+        color: #fff;
+        background-color: palegreen;
+      }
+      nav a {
+        color: orange;
+        text-decoration: none;
+        padding: 10px 20px;
+      }
+      nav a:nth-child(1) {
+        margin-left: auto;
+      }
+      nav a:hover {
+        color: #333;
+        background-color: orange;
+      }
+      #showArticles {
+        background-color: #eee;
+        padding: 20px;
+        display: grid;
+        grid-template-columns: 50% 50%;
+        grid-gap: 20px;
+        max-width: 95vw;
+        align-items: center;
+        justify-content: center;
+        margin: auto;
+      }
+      #showArticles div {
+        width: 47vw;
+        height: 50vh;
+        border: 1px solid black;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        align-items: center;
+        overflow: hidden;
+      }
+      #showArticles div img {
+        max-width: 100%;
+        height: 50%;
+      }
+      #btnDiv {
+        width: 150px;
+        padding: 10px;
+        margin: 10px auto;
+        display: none;
+      }
+      #btnDiv button {
+        margin: 0 3px;
+        padding: 2px;
+        font-size: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>News grid</h1>
+    <nav>
+      <a href="sports.html">sports</a>
+      <a href="entertainment.html">entertainment</a>
+      <a href="technology.html">technology</a>
+      <div id="search">
+        <input type="text" placeholder="Search" />
+        <button id="searchBtn" onclick="showSearchResult(this.id)">
+          Search
+        </button>
+      </div>
+    </nav>
+
+    <div id="showArticles"></div>
+
+    <div id="btnDiv"></div>
+  </body>
+</html>
+<script>
+  var data;
+  async function getNewsData(content) {
+    let response = await fetch(
+      `https://newsapi.org/v2/everything?q=${content}&from=2021-05-25&sortBy=publishedAt&apiKey=617d6ae40088405fb55dd7bace8784d1`
+    );
+    let data = await response.json();
+    return data;
+  }
+
+  async function showData() {
+    let showArticles = document.getElementById("showArticles");
+    data = await getNewsData("World");
+    console.log(data.articles);
+    data.articles.forEach(function (ele) {
+      let div = document.createElement("div");
+      div.innerHTML = `<img src=${ele.urlToImage}>
+                        <h2>${ele.title}</h2>
+                        <p>${ele.description}</p>
+                        <h5>${ele.publishedAt}</h5>
+                        <h6>${ele.content}</h6>
+                        <span>${ele.author}</span>`;
+      showArticles.appendChild(div);
+    });
+  }
+  showData();
+
+  function showButton(pageStartNumber) {
+    pageStartNumber = Number(pageStartNumber);
+    let originalId = pageStartNumber;
+    let btnDiv = document.getElementById("btnDiv");
+    btnDiv.innerHTML = null;
+
+    if (pageStartNumber <= 3) {
+      pageStartNumber = 2;
+    }
+    for (let i = pageStartNumber - 2; i <= pageStartNumber + 2; i++) {
+      /* console.log(i, pageStartNumber); */
+      let btn = document.createElement("button");
+      btn.setAttribute("id", i);
+      btn.onclick = function () {
+        showSearchResult(this.id);
+      };
+      btn.textContent = i + 1;
+      btnDiv.appendChild(btn);
+    }
+    let highlightBtn = document.getElementById(originalId);
+    highlightBtn.style.backgroundColor = "yellow";
+  }
+  showButton(0);
+
+  async function showSearchResult(id) {
+    let inputValue = document.getElementsByTagName("input")[0].value;
+
+    let dataDiv = document.getElementById("showArticles");
+    dataDiv.innerHTML = null;
+
+    dataDiv.style.gridTemplateColumns = "auto";
+
+    data = await getNewsData(inputValue);
+
+    if (id == "searchBtn") {
+      id = 0;
+    } else {
+      id = Number(id);
+    }
+    console.log(id);
+
+    let news = data.articles.slice(id * 5, id * 5 + 5);
+
+    news.forEach(function (ele) {
+      let div = document.createElement("div");
+      div.innerHTML = `<img src=${ele.urlToImage}>
+                        <h2>${ele.title}</h2>
+                        <p>${ele.description}</p>
+                        <h5>${ele.publishedAt}</h5>
+                        <h6>${ele.content}</h6>
+                        <span>${ele.author}</span>`;
+      showArticles.appendChild(div);
+    });
+    let btnDiv = document.getElementById("btnDiv");
+    btnDiv.style.display = "block";
+    showButton(id);
+  }
+</script>
